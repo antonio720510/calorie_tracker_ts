@@ -1,11 +1,12 @@
-import { useState, type ChangeEvent, type Dispatch, type SubmitEvent } from 'react'
+import { useState, type ChangeEvent, type Dispatch, type SubmitEvent, useEffect } from 'react'
 import { v4 as uuidv4} from 'uuid'
 import { categories } from '../data/categories'
 import { type Activity } from '../types'
-import type { ActivityActions } from '../reducers/activity-reducer'
+import type { ActivityActions, ActivityState } from '../reducers/activity-reducer'
 
 type FormProps = {
-    dispatch: Dispatch<ActivityActions>
+    dispatch: Dispatch<ActivityActions>,
+    state: ActivityState
 }
 
 const initialState = {
@@ -15,9 +16,17 @@ const initialState = {
     calories: 0,
 }
 
-export default function Form({ dispatch }: FormProps) {
+export default function Form({ dispatch, state }: FormProps) {
 
     const [activity, setActivity] = useState<Activity>(initialState)
+
+    useEffect(() =>{
+        if(state.activeId){
+            const selectedActivity = state.activities.filter(stateActivity => stateActivity.id === state.activeId)[0]
+            setActivity(selectedActivity)
+        }
+
+    }, [state.activeId])
 
     // Atrapa el evento del select y de los inputs,
     // para actualizar los states de los elementos    
@@ -32,7 +41,7 @@ export default function Form({ dispatch }: FormProps) {
 
     const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
-        dispatch({ type: "save_activity", payload: { newActivity: activity } })
+        dispatch({ type: "save-activity", payload: { newActivity: activity } })
         setActivity({
             ...initialState,
             id:uuidv4()
