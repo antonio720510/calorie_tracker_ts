@@ -11,6 +11,7 @@ type ActivityListProps = {
 
 export default function ActivityList({activities, dispatch} : ActivityListProps) {
 
+    // retorna el nombre de la categoria, cuando se actualiza activities
     const categoryName = useMemo(() => 
         (category: Activity['category']) => categories.map(cat => cat.id === category ? cat.name : '')
     ,[activities])
@@ -49,7 +50,7 @@ export default function ActivityList({activities, dispatch} : ActivityListProps)
                                 className="h-8 text-gray-800"
                             />
                         </button>
-                         <button
+                        <button
                             onClick={() => dispatch({type:"delete-activity", payload: {id: activity.id}})}
                         >
                             <XCircleIcon 
